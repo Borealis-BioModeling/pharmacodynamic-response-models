@@ -21,8 +21,8 @@ classifiers = [
   "Development Status :: 3 - Alpha",
 
   # Indicate who your project is intended for
-  "Intended Audience :: Bio-Modelers",
-  "Topic :: Biological Modeling :: Model Building",
+  "Intended Audience :: Pharma-Modelers",
+  "Topic :: Pharmalogical Modeling :: Exposure-Response",
 
   # Pick your license as you wish (see also "license" above)
   "License :: OSI Approved :: MIT",
