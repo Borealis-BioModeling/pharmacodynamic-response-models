@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Started the CHANGELOG.
 - `__version__` variable.
+- metadata attributes to each of the functions (eq_latex, name, response_type)
 
 ### Changed
 - Replaced the setup.py scritp with a pyproject.toml.

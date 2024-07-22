@@ -20,6 +20,8 @@ List of Functions:
     * cnifers_response
 """
 
+__version__ = "0.2.0"
+
 
 def concentration_response(effector_concentration, emin, emax, ec50, n):
     """Non-linear (sigmoidal) concentration-response equation.
@@ -43,6 +45,10 @@ def concentration_response(effector_concentration, emin, emax, ec50, n):
     """
     return emin + (emax - emin) / (1 + (ec50 / effector_concentration) ** n)
 
+
+concentration_response.eq_latex = r" E = E_{\textrm{min}} + \frac{\left(E_{\textrm{max}} - E_{\textrm{min}}\right)}{1 + \left(EC_{50} / [\textrm{effector}]\right)^n}"
+concentration_response.name = "Concentration-Response"
+concentration_response.response_type = "Exposure-Response"
 
 def dose_response(dose, emin, emax, ec50, n):
     """Non-linear (sigmoidal) dose-response equation.
@@ -69,6 +75,9 @@ def dose_response(dose, emin, emax, ec50, n):
     """
     return concentration_response(dose, emin, emax, ec50, n)
 
+dose_response.eq_latex = r" E = E_{\textrm{min}} + \frac{\left(E_{\textrm{max}} - E_{\textrm{min}}\right)}{1 + \left(EC_{50} / \textrm{Dose}\right)^n}"
+dose_response.name = "Dose-Response"
+dose_response.response_type = "Exposure-Response"
 
 def inhibitor_response(inhibitor_concentration, emin, emax, ic50, n):
     """Non-linear (sigmoidal) inhibitor-response equation.
@@ -99,6 +108,9 @@ def inhibitor_response(inhibitor_concentration, emin, emax, ic50, n):
     """
     return concentration_response(ic, emin, emax, ic50, -n)
 
+inhibitor_response.eq_latex = r" E = E_{\textrm{min}} + \frac{\left(E_{\textrm{max}} - E_{\textrm{min}}\right)}{1 + \left(IC_{50} / \left[\textrm{inhibitor}\right]\right)^{-n}}"
+inhibitor_response.name = "Inhibitor-Response"
+inhibitor_response.response_type = "Inhibitor-Response"
 
 def hill_langmuir_equation(ligand_concentration, kd):
     """Hill-Langmuir receptor occupation equation.
@@ -116,6 +128,9 @@ def hill_langmuir_equation(ligand_concentration, kd):
     """
     return ligand_concentration / (ligand_concentration + kd)
 
+hill_langmuir_equation.eq_latex = r" \frac{\left[ RL \right]}{\left[ RL \right] + \left[ R \right]} = \frac{\left[ L \right]}{\left[ L \right] + K_D}"
+hill_langmuir_equation.name = "Hill-Langmuir Equation"
+hill_langmuir_equation.response_type = "Receptor-Occupation"
 
 def hill_equation(ligand_concentration, emax, kd, n):
     """Hill receptor-response equation.
@@ -135,8 +150,13 @@ def hill_equation(ligand_concentration, emax, kd, n):
         float, numpy.array : The response for the given ligand concentration(s)
             in response units.
     """
-    return emax * ligand_concentration ** n / (ligand_concentration ** n + kd ** n)
+    return emax * ligand_concentration**n / (ligand_concentration**n + kd**n)
 
+hill_equation.eq_latex = (
+    r" E = E_{\textrm{max}}\frac{\left[ L \right]^n}{\left[ L \right]^n + K_D^n}"
+)
+hill_equation.name = "Hill Equation"
+hill_equation.response_type = "Receptor-Response"
 
 def clark_equation(ligand_concentration, emax, kd):
     """Clark equation for receptor-response.
@@ -171,6 +191,12 @@ def clark_equation(ligand_concentration, emax, kd):
     """
     return emax * ligand_concentration / (ligand_concentration + kd)
 
+
+clark_equation.eq_latex = (
+    r" E = E_{\textrm{max}}\frac{\left[ L \right]}{\left[ L \right] + K_D}"
+)
+clark_equation.name = "Clark Equation"
+clark_equation.response_type = "Receptor-Response"
 
 def operational_model(ligand_concentration, emax, kd, tau):
     """Operational (Black-Leff) model of receptor-response.
@@ -210,6 +236,9 @@ def operational_model(ligand_concentration, emax, kd, tau):
     """
     return emax * tau * ligand_concentration / ((tau + 1) * ligand_concentration + kd)
 
+operational_model.eq_latex = r" E = E_{\textrm{max}} \frac{\tau \left[ L \right]}{\left(\tau+1\right) \left[ L \right] + K_D}"
+operational_model.name = "Operational (Black-Leff) Model"
+operational_model.response_type = "Receptor-Response"
 
 def delcastillo_katz_model(ligand_concentration, emax, kd, tau):
     """Del Castillo-Katz model of receptor-response.
@@ -254,6 +283,9 @@ def delcastillo_katz_model(ligand_concentration, emax, kd, tau):
     """
     return emax * tau * ligand_concentration / ((tau + 1) * ligand_concentration + kd)
 
+delcastillo_katz_model.eq_latex = r" E = E_{\textrm{max}} \frac{\tau \left[ L \right]}{\left(\tau+1\right) \left[ L \right] + K_D}"
+delcastillo_katz_model.name = "Del Castillo-Katz Model"
+delcastillo_katz_model.response_type = "Receptor-Response"
 
 def buchwald_threeparameter_model(ligand_concentration, emax, kd, epsilon, gamma):
     """Three-parameter two-state model of receptor-response by Buchwald.
@@ -301,6 +333,9 @@ def buchwald_threeparameter_model(ligand_concentration, emax, kd, epsilon, gamma
         / ((epsilon * gamma + 1 - epsilon) * ligand_concentration + kd)
     )
 
+buchwald_threeparameter_model.eq_latex = r" E = \frac{E_{\textrm{max}} \epsilon \gamma \left[ L \right]}{\left(\epsilon \gamma + 1 - \epsilon\right)\left[ L \right] + K_D}"
+buchwald_threeparameter_model.name = "Three-Parameter Two-State Model"
+buchwald_threeparameter_model.response_type = "Receptor-Response"
 
 def gaddum_equation(ligand_concentration, antagonist_concentration, emax, kd, ki):
     """Gaddum equation for receptor-response with a competitive antagonist.
@@ -342,6 +377,10 @@ def gaddum_equation(ligand_concentration, antagonist_concentration, emax, kd, ki
         ligand_concentration, emax, kd * (1 + (antagonist_concentration / ki))
     )
 
+
+gaddum_equation.eq_latex = r" E = E_{\textrm{max}}\frac{\left[ L \right]}{\left[ L \right] + K_D\left(1 + \left[A\right]/K_I\right)}"
+gaddum_equation.name = "Gaddum Equation for Competitive Antagonist"
+gaddum_equation.response_type = "Inhibitor-Response"
 
 def noncompetitive_antagonist(
     ligand_concentration, antagonist_concentration, emax, kd, ki
@@ -388,6 +427,10 @@ def noncompetitive_antagonist(
     )
 
 
+noncompetitive_antagonist.eq_latex = r" E = E_{\textrm{max}}\frac{\left[ L \right]}{\left[ L \right] + K_D} \times \frac{1}{1 + \left(\left[A\right] / K_I\right)}"
+noncompetitive_antagonist.name = "Non-Competitive Antagonist"
+noncompetitive_antagonist.response_type = "Inhibitor-Response"
+
 def cnifers_response(agonist_concentration, fret_ratio_max, ec50, n):
     """Hill-type response equation for CNiFERs FRET response to an agonist.
 
@@ -418,3 +461,8 @@ def cnifers_response(agonist_concentration, fret_ratio_max, ec50, n):
         agonist_concentration, emin=0.0, emax=fret_ratio_max, ec50=ec50, n=n
     )
     return fret_ratio
+
+
+cnifers_response.eq_latex = r" \textrm{FRET Ratio} = \frac{ \textrm{FRET Ratio}_{\textrm{max}} }{\left(EC_{50} / \left[\textrm{Agonist}\right]\right)^n + 1}"
+cnifers_response.name = "Hill Equation for CNiFER Response"
+cnifers_response.response_type = "Exposure-Response"
